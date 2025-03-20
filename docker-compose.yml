@@ -1,0 +1,12 @@
+services:
+  miapp:
+    build: .
+    ports:
+      - "8000:8000"
+    links:
+      - ollama
+  ollama:
+    image: alpine/ollama
+    ports:
+      - "11434:11434"
+   
