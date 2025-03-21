@@ -1,12 +1,28 @@
 services:
   miapp:
-    build: .
+    build: ./api
     ports:
       - "8000:8000"
-    links:
+    depends_on:
       - ollama
+    restart: always
   ollama:
-    image: alpine/ollama
+    image: ollama/ollama
     ports:
       - "11434:11434"
-   
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  frontend:
+    build: ./llm_project_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - miapp
+    restart: always
+ 

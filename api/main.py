@@ -1,14 +1,19 @@
 from fastapi import FastAPI, HTTPException
 import requests
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://llm_project_frontend:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-
 
 @app.get("/query/{topic}")
 def query_ollama(topic: str):
