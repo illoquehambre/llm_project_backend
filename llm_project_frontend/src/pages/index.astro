@@ -1,5 +1,6 @@
 ---
-import {FormComponent} from '../components/FormComponent';
+import {OllamaFormComponent} from '../components/OllamaFormComponent';
+import {HuggingFaceFormComponent} from '../components/HuggingFaceFormComponent';
 import Layout from '../layouts/Layout.astro';
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
@@ -7,6 +8,10 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-	<FormComponent client:visible></FormComponent>
+	<div class="w-full sm:w-4/5 lg:w-3/5 mt-10 p-5 gap-8 flex flex-col">
+		<OllamaFormComponent client:visible></OllamaFormComponent>
+		<HuggingFaceFormComponent></HuggingFaceFormComponent>
+	</div>
+	
 
 </Layout>

@@ -38,19 +38,21 @@ services:
       - ml-network
     restart: always
   frontend:
-    build: ./llm_project_frontend
-      #context: ./llm_project_frontend
-      #dockerfile: Dockerfile
+    build: #./llm_project_frontend
+      context: ./llm_project_frontend
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
-    #volumes:
-      #- ./llm_project_frontend:/app
-      #- /app/node_modules
+    volumes:
+      - ./llm_project_frontend:/app
+      - /app/node_modules
     depends_on:
       - miapp
     networks:
       - ml-network
     restart: always
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     #command: npm run dev 
 volumes:
   mlruns_data:

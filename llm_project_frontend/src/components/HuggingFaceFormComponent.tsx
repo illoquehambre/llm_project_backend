@@ -18,39 +18,60 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  prompt: z.string().min(2, {
+    message: "Prompt must be at least 2 characters.",
   }).max(20, {
-    message: "Username must be at most 20 characters.",
+    message: "Prompt must be at most 20 characters.",
   }),
 })
 
-export function FormComponent() {
+export function HuggingFaceFormComponent() {
   const [responseData, setResponseData] = useState(null);
+  const [response2Data, setResponse2Data] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      prompt: "",
     },
   })
 
   // 2. Define a submit handler.
   const onSubmit = async (e: z.infer<typeof formSchema>) => {
-    console.log("e: ",e);
-    
+    console.log("e: ", e);
+
     setLoading(true);
     setResponseData(null);
     try {
-      const response = await fetch(`http://localhost:8000/query/${e.username}`);
-      console.log("response: ",response);
-      
+      //const response = await fetch(`http://localhost:8000/query/${e.prompt}`);
+      const response = await fetch(`http://localhost:8000/cassify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: e.prompt,
+        }),
+      });
+
+      const response2 = await fetch(`http://localhost:8000/cassify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: e.prompt,
+        }),
+      });
+
+      console.log("response: ", response);
+
       const data = await response.json();
       setResponseData(data.reponse);
-      console.log("data: ",data.response);
-      
+      console.log("data: ", data);
+
     } catch (error) {
       console.error(error)
     } finally {
@@ -61,13 +82,14 @@ export function FormComponent() {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 " >
           <FormField
+          disabled
             control={form.control}
-            name="username"
+            name="prompt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Prompt</FormLabel>
                 <FormControl>
                   <Input placeholder="shadcn" {...field} />
                 </FormControl>
@@ -78,7 +100,7 @@ export function FormComponent() {
               </FormItem>
             )}
           />
-          <Button type="submit"> {loading ? "Enviando..." : "Enviar"}</Button>
+          <Button disabled type="submit"> {loading ? "Enviando..." : "Enviar"}</Button>
         </form>
       </Form>
       {responseData && (
