@@ -5,11 +5,18 @@ services:
       - "8000:8000"
     depends_on:
       - ollama
+      - mlflow
+    volumes:
+      - ./hf_cache:/root/.cache/huggingface
+    networks:
+      - ml-network    
     restart: always
   ollama:
     image: ollama/ollama
     ports:
       - "11434:11434"
+    networks:
+      - ml-network
     restart: always
     #deploy:
       #resources:
@@ -18,11 +25,37 @@ services:
             #- driver: nvidia
               #count: all
               #capabilities: [gpu]
+  mlflow:
+    image: python:3.10-slim
+    working_dir: /home/app
+    command: bash -c "pip install mlflow==2.21.0 && mlflow server --backend-store-uri sqlite:////home/app/db/mlflow.db --default-artifact-root file:///home/app/mlruns --host 0.0.0.0"
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlruns_data:/home/app/mlruns
+      - mlflow_db:/home/app/db
+    networks:
+      - ml-network
+    restart: always
   frontend:
     build: ./llm_project_frontend
+      #context: ./llm_project_frontend
+      #dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    #volumes:
+      #- ./llm_project_frontend:/app
+      #- /app/node_modules
     depends_on:
       - miapp
+    networks:
+      - ml-network
     restart: always
- 
+    #command: npm run dev 
+volumes:
+  mlruns_data:
+  mlflow_db:
+  
+networks:
+  ml-network:
+    driver: bridge

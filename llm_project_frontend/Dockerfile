@@ -1,4 +1,4 @@
-FROM node:latest as builder
+FROM node:22.14.0 as builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ COPY public ./public
 
 RUN npm run build
 
-FROM node:latest
+FROM node:22.14.0
 RUN npm install -g serve
 
 WORKDIR /app

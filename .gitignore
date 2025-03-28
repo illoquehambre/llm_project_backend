@@ -1,0 +1,9 @@
+*.db
+
+hf_cache/
+
+_pycache_/
+
+mlruns/
+
+**/node_modules
